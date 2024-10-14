@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="fr" target-language="fr" datatype="plaintext" original="file.ext">
+    <header>
+      <tool tool-id="symfony" tool-name="Symfony"/>
+    </header>
+    <body>
+      <trans-unit id="B5iaR6m" resname="welcome_message">
+        <source>welcome_message</source>
+        <target>Bienvenue sur notre site web !</target>
+      </trans-unit>
+      <trans-unit id="rdCicuP" resname="app.salles_travail.title">
+        <source>app.salles_travail.title</source>
+        <target>Salles de travail</target>
+      </trans-unit>
+      <trans-unit id="T.7MgUU" resname="app.salles_travail.reservation_info">
+        <source>app.salles_travail.reservation_info</source>
+        <target>Les salles de travail peuvent être réservées du lundi au vendredi de 8h à 19h.</target>
+      </trans-unit>
+      <trans-unit id="AjGxGY4" resname="app.salles_travail.reservation_duration">
+        <source>app.salles_travail.reservation_duration</source>
+        <target>Chaque réservation doit durer au moins 1 heure et au plus 4 heures.</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

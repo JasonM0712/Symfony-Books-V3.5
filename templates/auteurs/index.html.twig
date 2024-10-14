@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Auteurs index{% endblock %}
+
+{% block body %}
+    <h1>Auteurs index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nom</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for auteur in auteurs %}
+            <tr>
+                <td>{{ auteur.nom }}</td>
+                <td>
+                    <a href="{{ path('app_auteurs_show', {'id': auteur.id}) }}">Visualiser</a>
+                    <a href="{{ path('app_auteurs_edit', {'id': auteur.id}) }}">Modifier</a>
+                </td>
+            </tr>
+
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_auteurs_new') }}">Ajouter un auteur</a>
+{% endblock %}

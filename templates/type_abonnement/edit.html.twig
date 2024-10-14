@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier Abonnement{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+
+    {% if app.user is defined and app.user.roles is defined %}
+        {% if 'ROLE_ADMIN' in app.user.roles %}
+            <h1>Modifier Abonnement</h1>
+
+            {{ include('type_abonnement/_form.html.twig', {'button_label': 'Update'}) }}
+
+            <br>
+            
+            <a href="{{ path('app_type_abonnement_index') }}">Retour en arrière</a>
+        {% else %}
+            <h1>Vous n'êtes pas Administrateur, accès interdit !</h1>
+        {% endif %}
+    {% else %}
+        <h1>Accès interdit !</h1>
+    {% endif %}
+
+</div>
+{% endblock %}

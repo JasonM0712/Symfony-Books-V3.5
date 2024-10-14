@@ -1,0 +1,9 @@
+welcome_message: Welcome to our website!
+app.salles_travail.title: "Workspaces"
+app.salles_travail.reservation_info: "Workspaces can be reserved from Monday to Friday from 8am to 7pm."
+app.salles_travail.reservation_duration: "Each reservation must be at least 1 hour and at most 4 hours."
+
+# Path: translations/messages.en.yaml
+
+
+

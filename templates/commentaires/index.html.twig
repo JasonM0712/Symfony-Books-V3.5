@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste Commentaires{% endblock %}
+
+{% block body %}
+
+<div class="container mt-5">
+
+    {% if app.user is defined and app.user.roles is defined %}
+        {% if 'ROLE_ADMIN' in app.user.roles %}
+            <h1>Liste Commentaires</h1>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Par</th>
+                        <th>Livre</th>
+                        <th>Date d'ajout</th>
+                        <th>Commentaire</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for commentaire in commentaires %}
+                    <tr>
+                        <td>{{ commentaire.id }}</td>
+                        <td>{{ commentaire.utilisateurs.prenom ~' '~ commentaire.utilisateurs.nom }}</td>
+                        <td>{{ commentaire.livres.nom }}</td>
+                        <td>{{ commentaire.dateAjout ? commentaire.dateAjout|date('d-m-Y') }}</td>
+                        <td>{{ commentaire.commentaire }}</td>
+                        <td><form method="post" action="{{ path('app_commentaires_delete', {'id': commentaire.id}) }}" onsubmit="return confirm('Etes vous certain de vouloir supprimer ce commentaire ?');">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ commentaire.id) }}">
+                                <button class="btn btn-lg btn-danger">Supprimer</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="4">Aucun commentaire</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+        {% else %}
+            <h1>Vous n'êtes pas Administrateur, accès interdit !</h1>
+        {% endif %}
+    {% else %}
+        <h1>Accès interdit !</h1>
+    {% endif %}
+
+</div>
+{% endblock %}

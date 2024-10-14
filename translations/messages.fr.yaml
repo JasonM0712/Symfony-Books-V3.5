@@ -1,0 +1,5 @@
+welcome_message: Bienvenue sur notre site web !
+app.salles_travail.title: "Salles de travail"
+app.salles_travail.reservation_info: "Les salles de travail peuvent être réservées du lundi au vendredi de 8h à 19h."
+app.salles_travail.reservation_duration: "Chaque réservation doit durer au moins 1 heure et au plus 4 heures."
+

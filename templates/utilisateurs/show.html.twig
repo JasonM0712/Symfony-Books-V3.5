@@ -1,0 +1,81 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Infos Utilisateur{% endblock %}
+
+{% block body %}
+
+<div class="container mt-5">
+
+    {% if app.user is defined and app.user.roles is defined %}
+        {% if 'ROLE_ADMIN' in app.user.roles %}
+            <h1>Infos Utilisateur {{ utilisateur.id }}</h1>
+
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <th>Id</th>
+                        <td>{{ utilisateur.id }}</td>
+                    </tr>
+                    <tr>
+                        <th>Email</th>
+                        <td>{{ utilisateur.email }}</td>
+                    </tr>
+                    <tr>
+                        <th>Roles</th>
+                        <td>{{ utilisateur.roles ? utilisateur.roles|json_encode : '' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Mot de passe</th>
+                        <td>{{ utilisateur.password }}</td>
+                    </tr>
+                    <tr>
+                        <th>Nom</th>
+                        <td>{{ utilisateur.nom }}</td>
+                    </tr>
+                    <tr>
+                        <th>Prénom</th>
+                        <td>{{ utilisateur.prenom }}</td>
+                    </tr>
+                    <tr>
+                        <th>Date de naissance</th>
+                        <td>{{ utilisateur.dateNaissance ? utilisateur.dateNaissance|date('Y-m-d') : '' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Adresse</th>
+                        <td>{{ utilisateur.adresse }}</td>
+                    </tr>
+                    <tr>
+                        <th>Code postal</th>
+                        <td>{{ utilisateur.codePostal }}</td>
+                    </tr>
+                    <tr>
+                        <th>Ville</th>
+                        <td>{{ utilisateur.ville }}</td>
+                    </tr>
+                    <tr>
+                        <th>Numéro de téléphone</th>
+                        <td>{{ utilisateur.numeroTelephone }}</td>
+                    </tr>
+                    <tr>
+                        <th>Langue du site</th>
+                        <td>{{ utilisateur.langueDuSiteFr ? 'FR' : 'US' }}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <a href="{{ path('app_utilisateurs_edit', {'id': utilisateur.id}) }}" class="btn btn-lg btn-primary">Administrer</a>
+
+            {{ include('utilisateurs/_delete_form.html.twig') }}
+
+            <br>
+
+            <a href="{{ path('app_utilisateurs_index') }}">Retour à la liste des utilisateurs</a>
+        {% else %}
+            <h1>Vous n'êtes pas Administrateur, accès interdit !</h1>
+        {% endif %}
+    {% else %}
+        <h1>Accès interdit !</h1>
+    {% endif %}
+
+</div>
+{% endblock %}

@@ -1,0 +1,16 @@
+controllers:
+    resource: ../src/Controller/
+    type: attribute
+
+livres_en_retard:
+    path: templates/livres/en-retard
+    controller: App\Controller\LivresController::livresEnRetard
+
+app_switch_language:
+    path: /switch-language/{_locale}
+    controller: App\Controller\TranslateController::switchLanguage
+
+debug_position_update:
+    path: /position_update
+    controller: App\Controller\LivresController::positionUpdate
+    methods: [POST]

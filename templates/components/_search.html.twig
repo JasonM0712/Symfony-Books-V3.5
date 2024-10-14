@@ -1,0 +1,8 @@
+<div class="container mt-5">
+    {% if form %}
+        {{ form_start(form) }}
+        {{ form_row(form.query) }}
+        {{ form_row(form.submit, { "attr" : { "class": "form-control btn btn-primary btn-sm mx-auto "}} ) }}
+        {{ form_end(form) }}
+    {% endif %}
+</div>

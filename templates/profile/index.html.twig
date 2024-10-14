@@ -1,0 +1,144 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Profil{% endblock %}
+
+{% block body %}
+
+    <div class="container mt-5">
+        <img src="images/profile/logo.jpg" alt="logo" style="width:250px">
+
+        <h1>Profil de {{ app.user.prenom ~' '~ app.user.nom }}</h1>
+
+        {% if 'ROLE_BANNI' in app.user.roles %}
+            <div style="background:red; padding:10px; color:white; font-weight:bold">Votre compte est Banni : Vous ne pouvez plus accéder aux services.</div>
+        {% endif %}
+        {% if 'ROLE_ADMIN' in app.user.roles%}
+            <span style="color:red; font-weight:bold">ADMINISTRATEUR</span><br>
+        {% endif %}
+        <br>
+
+        <h2 class="card-title">Vos informations personnelles</h2>
+
+        <table class="table">
+            <tbody>
+            <tr>
+                <th>Prénom</th>
+                <td>{{ app.user.prenom }}</td>
+            </tr>
+            <tr>
+                <th>Nom</th>
+                <td>{{ app.user.nom }}</td>
+            </tr>
+            <tr>
+                <th>Date de naissance</th>
+                <td>{{ app.user.dateNaissance().format('d/m/Y') }}</td>
+            </tr>
+            <tr>
+                <th>Adresse</th>
+                <td>{{ app.user.adresse }}</td>
+            </tr>
+            <tr>
+                <th>Code postal</th>
+                <td>{{ app.user.codePostal }}</td>
+            </tr>
+            <tr>
+                <th>Ville</th>
+                <td>{{ app.user.ville }}</td>
+            </tr>
+            <tr>
+                <th>Numéro de téléphone</th>
+                <td>{{ app.user.numeroTelephone }}</td>
+            </tr>
+            <tr>
+                <th>Langue du site</th>
+                <td>{{ app.user.isLangueDuSiteFr() ? 'FR' : 'US' }}</td>
+            </tr>
+            </tbody>
+        </table>
+        <a href="{{ path('app_profile_identite_edit', {'id': app.user.id}) }}" class="btn btn-lg btn-primary">Editer</a>
+
+        <br>
+        <br>
+
+        <h2 class="card-title">Vos informations de connexion</h2>
+
+        <table class="table">
+            <tbody>
+            <tr>
+                <th>Email</th>
+                <td>{{ app.user.email }}</td>
+            </tr>
+            <tr>
+                <th>Mot de passe</th>
+                <td>******</td>
+            </tr>
+            </tbody>
+        </table>
+        <a href="profile/{{ app.user.id }}/connexion/edit" class="btn btn-lg btn-primary">Editer</a>
+
+        <br>
+        <br>
+
+        <hr>
+
+        <h2 class="card-title">Votre historique d'emprunts de livres</h2>
+
+        {# liste des emprunts de l'utilisateur  #}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Livre</th>
+                    <th>Emprunté le</th>
+                    <th>Restitution prévisionnelle</th>
+                    <th>Restitution effective</th>
+                    <th>Extension</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% if emprunts is not empty %}
+                {% for emprunt in emprunts %}
+                    <tr>
+                        <td>{{ emprunt.livres.nom }}</td>
+                        <td>{{ emprunt.dateDemande|date('d/m/Y') }}</td>
+                        <td>{{ emprunt.dateRestitutionPrevisionnelle|date('d/m/Y') }}</td>
+                        {% if emprunt.dateRestitutionEffective is not empty %}
+                            <td style="color:green">{{ emprunt.dateRestitutionEffective|date('d/m/Y') }}</td>
+                        {% else %}
+                            <td style="color:red">Non restitué</td>
+                        {% endif %}
+                        {% if emprunt.extensionEmprunt %}
+                            <td>OUI</td>
+                        {% else %}
+                            <td>NON</td>
+                        {% endif %}
+                        {% if emprunt.restitue %}
+                            <td style="color:green">Déjà restitué</td>
+                        {% else %}
+                            <td>
+                                <form method="post" action="{{ path('app_restituer', {'empruntId': emprunt.id}) }}" style="display:inline-block;"><button type="submit" class="btn btn-danger">Restituer</button></form>
+                                {% if not emprunt.extensionEmprunt %}
+                                    <form method="post" action="{{ path('app_extend_emprunt', {'empruntId': emprunt.id}) }}" style="display:inline-block;"><button type="submit" class="btn btn-warning">Extension</button></form>
+                                {% endif %}
+                            </td>
+                        {% endif %}
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="13">Aucun emprunt trouvé.</td>
+                </tr>
+            {% endif %}
+            </tbody>
+        </table>
+        
+        <br>
+        <br>
+
+        <hr>
+
+        <h2 class="card-title">Votre historique de réservations de salles de travail</h2>
+
+        liste à générer
+
+    </div>
+{% endblock %}

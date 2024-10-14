@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Livres en retard{% endblock %}
+
+{% block body %}
+<h1>Livres en Retard</h1>
+{% if empruntsEnRetard is not empty %}
+    <ul>
+        {% for emprunt in empruntsEnRetard %}
+            <div class="alert alert-danger" role="alert">Livres en retard de restitution</div>
+                <li> 
+                    <strong>Livre:</strong> {{ emprunt.livres.nom }} {# Assurez-vous que 'livres' est le bon nom de la relation dans Emprunts et 'nom' est le champ dans Livres #}
+                    <br>
+                    <strong>Emprunté par: </strong>{{ emprunt.utilisateurs.prenom }} {{ emprunt.utilisateurs.nom }} {# Assurez-vous que 'utilisateurs' est le bon nom de la relation dans Emprunts et 'nom' est le champ dans Utilisateurs #}
+                    <br>
+                    <strong>Date d'emprunt:</strong> {{ emprunt.dateDemande|date('Y-m-d') }}
+                    <br>
+                    <strong>Date de restitution prévue:</strong> {{ emprunt.dateRestitutionPrevisionnelle|date('Y-m-d') }}
+                    <br>
+                    {# <strong>En retard de:</strong> {{ "now"|date('Y-m-d').diff(emprunt.dateRestitutionPrevisionnelle|date('Y-m-d')).days }} jours #}
+                </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>Aucun livre en retard.</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,122 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Livres index{% endblock %}
+
+{% block body %}
+    <h1>Gestion des Livres</h1> 
+
+    {# les livres en retard #}
+
+    <div style="padding: 13px; margin-top: 10px;">
+        <a href="{{path('app_en_retard')}}" type="button" class="btn btn-primary">Livres en retard</a>
+    </div> 
+
+    {# convertisseur en pdf #}
+
+    <div style="padding: 10px; margin-top: 5px;">
+        <form action="{{ path('app_html2pdf') }}">
+            <button type="submit" class="btn btn-primary mt-3">Convertir en PDF</button>
+        </form>
+    </div>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Nom</th>
+            <th>Année de Publication</th>
+            <th>Resume</th>
+            <th>Couverture</th>
+            <th>Disponibilite</th>
+            <th>actions</th>
+        </tr>
+        </thead>
+
+        <tbody id="source-list">
+            {% for livre in pager.getCurrentPageResults() %}
+                <tr id="list-item" data-id='{{ livre.id }}'>
+                    <td style="display : none" class="position">{{ livre.position }}</td>
+                    <td>{{ livre.nom }}</td>
+                    <td>{{ livre.anneePublication }}</td>
+                    <td>{{ livre.resume }}</td>
+                    <td><img src="{{ vich_uploader_asset(livre, 'imageFile') }}" alt="{{ livre.nom }}" style="width: 300px"/></td>
+                    <td>{{ livre.disponibilite ? 'Oui' : 'Non' }}</td>
+                    <td>
+                        <a class="btn btn-primary" href="{{ path('app_livres_show', {'id': livre.id}) }}" style="margin-bottom: 5px">Visuel</a>
+                        <a class="btn btn-primary" href="{{ path('app_livres_edit', {'id': livre.id}) }}">Editer</a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="7">Pas de livre</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a class="btn btn-primary" href="{{ path('app_livres_new') }}">Créer un nouveau livre</a>
+
+    <div class="pagination">
+        <div class="navigation">
+            {% if pager.haveToPaginate %}
+                <ul class="pagination">
+                    {% if pager.currentPage != 1 %}
+                        <li class="page-item"><a class="page-link" href="{{ path('app_livres_index', { page: pager.currentPage - 1 }) }}">Précédent</a></li>
+                    {% endif %}
+                    {% for page in 1..pager.nbPages %}
+                        <li class="page-item {% if page == pager.currentPage %}active{% endif %}">
+                            <a class="page-link" href="{{ path('app_livres_index', { page: page }) }}">{{ page }}</a>
+                        </li>
+                    {% endfor %}
+                    {% if pager.currentPage != pager.nbPages %}
+                        <li class="page-item"><a class="page-link" href="{{ path('app_livres_index', { page: pager.currentPage + 1 }) }}">Suivant</a></li>
+                    {% endif %}
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+   
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const el = document.getElementById('source-list');
+            new Sortable(el, {
+                animation: 150,
+                onEnd: function () {
+                    const ids = [];
+                    el.querySelectorAll('tr').forEach((row, index) => {
+                        const id = row.getAttribute('data-id');
+                        console.log(id + ' ' + index);
+                        if (id) {
+                            ids.push({ id: id, position: index + 1 });
+                        }
+                    }); 
+                    
+                    console.log('{{ path('app_position_update') }}');
+                    console.log(ids);
+                    fetch('{{ path('app_position_update') }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(ids)
+                    })
+                    .then(response => {
+                        console.log(response);
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            console.log('Positions updated successfully');
+                        } else {
+                            console.error('Failed to update positions');
+                        }
+                    })
+                    .catch(error =>{
+                    console.error('Error:', error)
+                    console.error('full', JSON.stringify(error, null, 4))
+                    });
+
+                }
+            });
+        });
+    </script>
+{% endblock %}

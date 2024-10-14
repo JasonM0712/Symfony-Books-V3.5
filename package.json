@@ -1,0 +1,22 @@
+{
+  "name": "your-project-name",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "encore dev",
+    "dev-server": "encore dev-server",
+    "watch": "encore dev --watch",
+    "build": "encore production"
+  },
+  "dependencies": {
+    "jquery": "^3.7.1",
+    "sortablejs": "^1.15.2"
+  },
+  "devDependencies": {
+    "@symfony/webpack-encore": "^4.6.1",
+    "core-js": "^3.6.5",
+    "regenerator-runtime": "^0.13.7",
+    "sass": "^1.77.6",
+    "sass-loader": "^14.0.0"
+  }
+}

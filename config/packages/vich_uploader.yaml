@@ -1,0 +1,25 @@
+vich_uploader:
+    db_driver: orm
+
+    metadata:
+        type: attribute
+
+    mappings:
+
+        salles_images:
+            uri_prefix: /images/salles_images
+            upload_destination: '%kernel.project_dir%/public/images/salles_images'
+            namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
+            
+
+    #mappings:
+    #    products:
+    #        uri_prefix: /images/products
+    #        upload_destination: '%kernel.project_dir%/public/images/products'
+    #        namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
+
+        livres:
+            uri_prefix: /images/livres
+            upload_destination: '%kernel.project_dir%/public/images/livres'
+            namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
+

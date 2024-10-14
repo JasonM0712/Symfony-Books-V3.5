@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Abonnements{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+
+    {% if app.user is defined and app.user.roles is defined %}
+        {% if 'ROLE_BANNI' not in app.user.roles %}
+            <h1>Abonnements</h1>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Libellé</th>
+                        <th>Tarif</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for type_abonnement in type_abonnements %}
+                    <tr>
+                        <td>{{ type_abonnement.libelle }}</td>
+                        <td>{{ type_abonnement.tarif }} €</td>
+                        <td>
+                            <a href="" class="btn btn-lg btn-primary">Souscrire</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Pour 1 an (365 jours)</td>
+                        <td>{{ (type_abonnement.tarif * 12 *0.9) | number_format(2) }} €
+                            <br>
+                            Bénéficiez 10% de remise ({{ (type_abonnement.tarif * 12 *0.9) | number_format(2) }} € au lieu de {{ (type_abonnement.tarif * 12) | number_format(2) }} €)</td>
+                        <td>
+                            <a href="" class="btn btn-lg btn-primary">Souscrire</a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="4">Aucun abonnement</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <h1>Vous êtes Banni, accès interdit !</h1>
+        {% endif %}
+    {% else %}
+        <h1>Accès interdit !</h1>
+    {% endif %}
+
+</div>
+{% endblock %}

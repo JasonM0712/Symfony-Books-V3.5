@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Administration{% endblock %}
+
+{% block body %}
+
+<div class="container mt-5">
+
+    {% if app.user is defined and app.user.roles is defined %}
+        {% if 'ROLE_ADMIN' in app.user.roles %}
+            <h1>Administration</h1>
+
+            <br>
+            <br>
+
+            <a href="{{ path('app_utilisateurs_index') }}" class="btn btn-lg btn-primary">Gestion des utilisateurs</a>
+            
+            <br>
+            <br>
+
+            <a href="{{ path('app_salles_travail_index') }}" class="btn btn-lg btn-primary">Gestion des salles de travail</a>
+
+            <br>
+            <br>
+
+            <a href="{{ path('app_livres_index') }}" class="btn btn-lg btn-primary">Gestion des livres</a>
+
+            <br>
+            <br>
+
+            <a href="{{ path('app_commentaires_index') }}" class="btn btn-lg btn-primary">Gestion des commentaires</a>
+
+            <br>
+            <br>
+
+            <a href="{{ path('app_type_abonnement_index') }}" class="btn btn-lg btn-primary">Gestion de l'abonnement</a>
+
+            <br>
+            <br>
+
+            <a href="{{ path('app_auteurs_index') }}" class="btn btn-lg btn-primary">Gestion des auteurs</a>
+
+        {% else %}
+            <h1>Vous n'êtes pas Administrateur, accès interdit !</h1>
+        {% endif %}
+    {% else %}
+        <h1>Accès interdit !</h1>
+    {% endif %}
+
+</div>
+{% endblock %}

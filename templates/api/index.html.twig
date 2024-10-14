@@ -1,0 +1,127 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Calendrier{% endblock %}
+
+{% block body %}
+    <style>
+        #calendrier {
+            width: 50%;
+            margin: auto;
+        }
+    </style>
+
+    <div class="container">
+        <div class="row justify-content-center mt-50 ">
+            <div class="col-md-25">
+                <div class="card">
+                    <div class="card-body">
+                        <h1 class="text-center mb-25">Calendrier des rendez-vous</h1>
+                        <div id="calendrier" ></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-3 justify-content-center">
+            <div class="col-md-6">
+                <div class="text-center">
+                    <a href="{{ path('app_calendar_index') }}" class="btn btn-outline-success btn-lg">Voir vos Réservations</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        function updateEvent(event) {
+            fetch(`/api/${event.id}/edit`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    title: event.title || 'Sans titre',
+                    start: event.start.toISOString(),
+                    end: event.end.toISOString(),
+                    description: event.description || 'Description',
+                    background_color: event.backgroundColor || '#3788d8',
+                    text_color: event.textColor || '#ffffff',
+                    all_day: event.allDay
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    console.log('Mise à jour réussie:', data.message);
+                } else {
+                    console.error('Erreur lors de la mise à jour:', data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Erreur réseau:', error);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            let calendarElt = document.querySelector('#calendrier');
+            let calendar = new FullCalendar.Calendar(calendarElt, {
+                initialView: 'timeGridWeek',
+                locale: 'fr',
+                timeZone: 'Europe/Paris',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'timeGridWeek,timeGridDay'
+                },
+                slotDuration: '00:60:00',
+                slotMinTime: '08:00:00',
+                slotMaxTime: '18:00:00',
+                slotLabelFormat: {
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    omitZeroMinute: false,
+                    hour12: false
+                },
+                validRange: {
+                    start: '2024-04-23',
+                    end: '2024-12-29'
+                },
+                events: {{ data | raw }},
+                editable: true,
+                eventResizable: true,
+                droppable: true, // Permettre le glisser-déposer des événements
+
+                select: function(arg) {
+                    // Lorsque l'utilisateur sélectionne une plage horaire
+                    let diffInHours = Math.abs(arg.end - arg.start) / 36e5;
+                    if (diffInHours < 1 || diffInHours > 4) {
+                        alert("La réservation doit être d'au moins 1 heure et ne pas dépasser 4 heures.");
+                        calendar.unselect();
+                    } else {
+                        // Afficher un formulaire pour créer un rendez-vous avec les détails de la plage horaire sélectionnée
+                        // Une fois le formulaire soumis, ajoutez la logique pour enregistrer le rendez-vous dans votre base de données
+                        console.log("Créneau horaire sélectionné:", arg.start, arg.end);
+                    }
+                },
+                eventDrop: function(info) {
+                    console.log(info.event.id);
+                    updateEvent(info.event);
+                },
+                eventResize: function(info) {
+                    let diffInHours = Math.abs(info.event.end - info.event.start) / 36e5;
+                    if (diffInHours < 1 || diffInHours > 4) {
+                        // Annuler la redimension de l'événement si la durée ne respecte pas les contraintes
+                        info.revert();
+                        alert("La durée de l'événement doit être d'au moins 1 heure et ne pas dépasser 4 heures.");
+                    } else {
+                        // Mettre à jour l'événement dans la base de données ou effectuer d'autres actions nécessaires
+                        updateEvent(info.event);
+                    }
+                }
+            });
+        calendar.render();
+    });
+    </script>
+
+{% endblock %}

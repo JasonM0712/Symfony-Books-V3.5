@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Créer Utilisateur{% endblock %}
+
+{% block body %}
+
+<div class="container mt-5">
+
+    {% if app.user is defined and app.user.roles is defined %}
+        {% if 'ROLE_ADMIN' in app.user.roles %}
+            <h1>Créer un nouvel Utilisateur</h1>
+
+            {{ include('utilisateurs/_form.html.twig', {'email_label': 'Update'}) }}
+
+            <br>
+            
+            <a href="{{ path('app_utilisateurs_index') }}">Retour à la liste des utilisateurs</a>
+        {% else %}
+            <h1>Vous n'êtes pas Administrateur, accès interdit !</h1>
+        {% endif %}
+    {% else %}
+        <h1>Accès interdit !</h1>
+    {% endif %}
+
+</div>
+{% endblock %}

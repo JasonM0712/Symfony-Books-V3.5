@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste Utilisateurs{% endblock %}
+
+{% block body %}
+
+<div class="container mt-5">
+
+    {% if app.user is defined and app.user.roles is defined %}
+        {% if 'ROLE_ADMIN' in app.user.roles %}
+            <h1>Liste Utilisateurs</h1>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Email</th>
+                        <th>Roles</th>
+                        <th>Nom</th>
+                        <th>Prénom</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for utilisateur in utilisateurs %}
+                    <tr>
+                        <td>{{ utilisateur.id }}</td>
+                        <td>{{ utilisateur.email }}</td>
+                        <td>{{ utilisateur.roles ? utilisateur.roles|json_encode : '' }}</td>
+                        <td>{{ utilisateur.nom }}</td>
+                        <td>{{ utilisateur.prenom }}</td>
+                        <td>
+                            <a href="{{ path('app_utilisateurs_show', {'id': utilisateur.id}) }}" class="btn btn-lg btn-primary">Voir</a>
+                            <a href="{{ path('app_utilisateurs_edit', {'id': utilisateur.id}) }}" class="btn btn-lg btn-primary">Administrer</a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="13">Aucun utilisateur</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+            <a href="{{ path('app_utilisateurs_new') }}" class="btn btn-lg btn-primary">Créer un nouvel utilisateur</a>
+        {% else %}
+            <h1>Vous n'êtes pas Administrateur, accès interdit !</h1>
+        {% endif %}
+    {% else %}
+        <h1>Accès interdit !</h1>
+    {% endif %}
+
+</div>
+{% endblock %}

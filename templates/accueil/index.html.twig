@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil{% endblock %}
+
+{% block body %}
+
+<style>
+body::after {
+    background-image: unset;
+    background-color: white
+}
+</style>
+
+<br>
+<h1 class="d-flex justify-content-center">Bienvenue sur Symfony-Books !</h1>
+<br>
+<video width="100%" autoplay loop muted>
+    <source src="videos/accueil.mp4" type="video/mp4" />
+</video>
+
+{% endblock %}

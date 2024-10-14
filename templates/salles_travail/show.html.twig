@@ -1,0 +1,63 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}SallesTravail{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h1>SallesTravail</h1>
+        <table class="table">
+            <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ salles_travail.id }}</td>
+            </tr>
+            <tr>
+                <th>Nom</th>
+                <td>{{ salles_travail.nom }}</td>
+            </tr>
+            <tr>
+                <th>Capacite</th>
+                <td>{{ salles_travail.capacite }}</td>
+            </tr>
+            <tr>
+                <th>Description</th>
+                <td>{{ salles_travail.description }}</td>
+            <tr>
+                <th>Disponibilite</th>
+                <td>{{ salles_travail.disponibilite ? 'Yes' : 'No' }}</td>
+            </tr>
+            <tr>
+                <th>Wi-Fi</th>
+                <td>{{ salles_travail.wifi_equipement ? 'Yes' : 'No' }}</td>
+            </tr>
+            <tr>
+                <th>Projecteur</th>
+                <td>{{ salles_travail.projecteur_equipement ? 'Yes' : 'No' }}</td>
+            </tr>
+            <tr>
+                <th>Tableau</th>
+                <td>{{ salles_travail.tableau_equipement ? 'Yes' : 'No' }}</td>
+            </tr>
+            <tr>
+                <th>Prise électriques</th>
+                <td>{{ salles_travail.prise_electrique_equipement ? 'Yes' : 'No' }}</td>
+            </tr>
+            <tr>
+                <th>Télévision</th>
+                <td>{{ salles_travail.television_equipement ? 'Yes' : 'No' }}</td>
+            </tr>
+            <tr>
+                <th>Salle climatisé</th>
+                <td>{{ salles_travail.climatisation_equipement ? 'Yes' : 'No' }}</td>
+            </tr>
+
+            </tbody>
+        </table>
+    </div>
+
+    <a href="{{ path('app_salles_travail_index') }}">back to list</a>
+
+    <a href="{{ path('app_salles_travail_edit', {'id': salles_travail.id}) }}">edit</a>
+
+    {{ include('salles_travail/_delete_form.html.twig') }}
+{% endblock %}

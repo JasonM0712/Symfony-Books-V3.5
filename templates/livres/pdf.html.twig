@@ -1,0 +1,33 @@
+<page backtop="20mm" backbottom="20mm" backleft="10mm" backright="10mm">
+    {% for livre in livres %}
+                <div class="modal fade" id="staticBackdrop{{ livre.id }}" data-bs-backdrop="static" data-bs-keyboard="false"
+                    tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-xl">
+                        <div class="modal-content">
+                            <div class="modal-header ">
+                                <h5 class="modal-title" id="staticBackdropLabel">{{ livre.nom }}</h5>
+                            </div>
+                            <div class="modal-body ">
+                                <div class="d-flex justify-content-center">
+                                    {# <img src="{{ vich_uploader_asset(livre, 'imageFile') }}" alt="{{ livre.nom }}" #}
+                                        {# style="height:450px; object-fit: cover"> #}
+                                </div>
+                                <br>
+                                <p><b>Résumé :</b> {{ livre.resume }}</p>
+                                <p><b>Année de publication :</b> {{ livre.anneePublication }} </p>
+                                <p><b>Auteur(s) :</b>
+                                {% if livre.auteurs is empty %}
+                                    Aucun auteur trouvé.</p>
+                                {% else %}
+                                    {% for auteurs in livre.auteurs %}
+                                        {{ auteurs.nom }}</p>
+                                    {% endfor %}
+                                {% endif %}
+                                <p><b>État :</b> {{ livre.etatsLivres.libelle }}</p> 
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    {% endfor %}
+</page>
+

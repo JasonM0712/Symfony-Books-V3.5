@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Abonnements{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+
+    {% if app.user is defined and app.user.roles is defined %}
+        {% if 'ROLE_ADMIN' in app.user.roles %}
+            <h1>Abonnements</h1>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Libellé</th>
+                        <th>Tarif</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for type_abonnement in type_abonnements %}
+                    <tr>
+                        <td>{{ type_abonnement.libelle }}</td>
+                        <td>{{ type_abonnement.tarif }} €</td>
+                        <td>
+                            <a href="{{ path('app_type_abonnement_edit', {'id': type_abonnement.id}) }}" class="btn btn-lg btn-primary">Modifier</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Pour 1 an (365 jours)</td>
+                        <td>{{ (type_abonnement.tarif * 12 *0.9) | number_format(2) }} €</td>
+                        <td>Non modifiable (Calcul automatique avec 10% de remise)</td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="4">Aucun abonnement</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <h1>Vous n'êtes pas Administrateur, accès interdit !</h1>
+        {% endif %}
+    {% else %}
+        <h1>Accès interdit !</h1>
+    {% endif %}
+
+</div>
+{% endblock %}

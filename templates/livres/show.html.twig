@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Livres{% endblock %}
+
+{% block body %}
+    <h1>Livres</h1>
+
+    <table class="table">
+        <tbody>
+        <tr>
+            <th>Nom</th>
+            <td>{{ livre.nom }}</td>
+        </tr>
+        <tr>
+            <th>Auteur</th>
+            {# <td>{{ livre.auteurs }}</td> #}
+        <tr>
+            <th>AnneePublication</th>
+            <td>{{ livre.anneePublication }}</td>
+        </tr>
+        <tr>
+            <th>Resume</th>
+            <td>{{ livre.resume }}</td>
+        </tr>
+        <tr>
+            <th>Image</th>
+            <td><img src="{{ vich_uploader_asset(livre, 'imageFile') }}" alt="{{ livre.nom }}"/></td>
+        </tr>
+        <tr>
+            <th>Disponibilite</th>
+            <td>{{ livre.disponibilite ? 'Oui' : 'Non' }}</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <a class="btn btn-primary" href="{{ path('app_livres_index') }}">Retour à la liste</a>
+
+    <a class="btn btn-primary" href="{{ path('app_livres_edit', {'id': livre.id}) }}">Editer</a>
+
+    {{ include('livres/_delete_form.html.twig') }}
+{% endblock %}

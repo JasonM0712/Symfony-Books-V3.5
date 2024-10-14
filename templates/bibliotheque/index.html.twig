@@ -1,0 +1,253 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Symfony Book{% endblock %}
+
+{% block body %}
+    <h1 class="d-flex justify-content-center mb-5">Bibliothèque</h1>
+    <nav>
+        <ul>
+            {% include "components/_search.html.twig" with { form: form } only %}
+        </ul>
+    </nav>
+    <div class="container">
+        
+        {# modal #}
+        {% for livre in livres %}
+            <div class="modal fade" id="staticBackdrop{{ livre.id }}" data-bs-backdrop="static" data-bs-keyboard="false"
+                tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog modal-xl">
+                    <div class="modal-content">
+                        <div class="modal-header ">
+                            <h5 class="modal-title" id="staticBackdropLabel">{{ livre.nom }}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body ">
+                            <div class="d-flex justify-content-center">
+                                <img src="{{ vich_uploader_asset(livre, 'imageFile') }}" alt="{{ livre.nom }}"
+                                     style="height:450px; object-fit: cover">
+                            </div>
+                            <br>
+                            <p><b>Résumé :</b> {{ livre.resume }}</p>
+                            <p><b>Année de publication :</b> {{ livre.anneePublication }} </p>
+                            <p><b>Auteur(s) :</b>
+                            {% if livre.auteurs is empty %}
+                                Aucun auteur trouvé.</p>
+                            {% else %}
+                                {% for auteurs in livre.auteurs %}
+                                    {{ auteurs.nom }}</p>
+                                {% endfor %}
+                            {% endif %}
+
+                            <p><b>État :</b> {{ livre.etatsLivres.libelle }}</p>
+                            
+                            {% if app.user is defined and app.user.roles is defined %}
+                                {# emprunt #}
+                                    {% if livre.emprunts is not empty %}
+                                        {% for emprunt in livre.emprunts %}
+                                            {% if not emprunt.dateRestitutionEffective and emprunt.utilisateurs.id == app.user.id %}
+                                                <div style="border: 1px solid; padding: 10px">
+                                                    <p>Emprunté le : {{ emprunt.dateDemande|date('d-m-Y') }}</p>
+                                                    <p>Restitution prévue le: {{ emprunt.dateRestitutionPrevisionnelle|date('d-m-Y') }}</p>
+                                                    <form method="post" action="{{ path('app_restituer', {'empruntId': emprunt.id}) }}" style="display:inline-block;">
+                                                        <button type="submit" class="btn btn-danger">Restituer</button>
+                                                    </form>
+                                                    {% if not emprunt.extensionEmprunt %}
+                                                        <form method="post" action="{{ path('app_extend_emprunt', {'empruntId': emprunt.id}) }}" style="display:inline-block;">
+                                                            <button type="submit" class="btn btn-warning">Extension</button>
+                                                        </form>
+                                                    {% endif %}
+                                                </div>
+                                                <br>
+                                            {% else %} 
+                                                {% if emprunt.restitue == 0 %}
+                                                    <div style="border: 1px solid; padding: 10px">
+                                                        <p>Emprunté le : {{ emprunt.dateDemande|date('d-m-Y') }}</p>
+                                                        <p>Restitution prévue le : {{ emprunt.dateRestitutionEffective|date('d-m-Y') }}</p>
+                                                    </div>
+                                                    <br>
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% endif %}
+
+                                {# Option pour emprunter un livre #}
+
+                                    <div style="border: 1px solid; padding: 10px">
+                                    {% if livre.disponibilite %}
+                                        <p style="color:green; font-weigt:bold">Disponible</p>
+                                        <a href="{{ path('app_emprunts', {'livreId': livre.id}) }}" class="btn btn-success">Emprunter</a>
+                                    {% else %}
+                                        <p style="color:red; font-weigt:bold">Indisponible</p>
+                                    {% endif %}
+                                    </div>
+                                    <br>
+
+                                {# Affichage des Commentaires #}
+                                
+                                    <div style="border: 1px solid; padding: 10px">
+                                        <h5><b>Commentaires :</b></h5>
+                                        {% if livre.commentaires is empty %}
+                                            <p>Aucun commentaire trouvé.</p>
+                                        {% else %}
+                                            {% for commentaire in livre.commentaires %}
+                                                <h5>Par : {{ commentaire.utilisateurs.prenom ~' '~ commentaire.utilisateurs.nom }}</h5>
+                                                <h6>Le : {{ commentaire.dateAjout|date('d-m-Y') }}</h6>
+                                                <p>{{ commentaire.commentaire }} </p>
+                                            {% endfor %}
+                                        {% endif %}
+                                        
+                                        {# ajouter un commentaire #}
+                                        <form action="{{ path('app_commentaire_emprunt', {'livreId': livre.id}) }}" method="post">
+                                            <button type="submit" class="btn btn-primary mt-3">Ajouter un commentaire</button>
+                                        </form>
+                                    </div>
+                                    <br>
+
+                                {# Affichage des Notes #}
+                                
+                                    <div style="border: 1px solid; padding: 10px">
+                                        <h5><b>Notes :</b></h5>
+                                        {% if livre.notes is empty %}
+                                            <p>Aucune note trouvée.</p>
+                                        {% else %}
+                                            {% for note in livre.notes %}
+                                                <h5>Par : {{ note.utilisateurs.prenom ~' '~ note.utilisateurs.nom }}</h5>
+                                                {% if note.note == 1 %}
+                                                    <p>⭐</p>
+                                                {% elseif note.note == 2 %}
+                                                    <p>⭐⭐</p>
+                                                {% elseif note.note == 3 %}
+                                                    <p>⭐⭐⭐</p>
+                                                {% elseif note.note == 4 %}
+                                                    <p>⭐⭐⭐⭐</p>
+                                                {% else %}
+                                                    <p>⭐⭐⭐⭐⭐</p>
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endif %}
+                                        
+                                        {# ajouter une note #}
+                                        <form action="{{ path('app_note', {'livreId': livre.id}) }}" method="post">
+                                            <button type="submit" class="btn btn-primary mt-3">Ajouter une note</button>
+                                        </form>
+                                    </div>
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+
+        {# tous les livres #}
+        <div class="container mt-5">
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% set counter = 0 %}
+                {% for livre in pagerfanta.getCurrentPageResults() %}
+                    {% for livre_filtre in livres %} 
+                        {% if livre_filtre.id == livre.id %}
+                            {% set counter = counter + 1 %}
+                                <div class="col">
+                                    <div class="card h-100">
+                                        <img src="{{ vich_uploader_asset(livre, 'imageFile') }}" class="card-img-top "
+                                            style="height:300px; object-fit: cover" alt="{{ livre.nom }}">
+                                        <div class="card-body ">
+                                            <h5 class="card-title mb-5 d-flex justify-content-center">{{ livre.nom }}</h5>
+                                            <p class="card-text d-flex justify-content-center">
+                                                {% if livre.auteurs is empty %}
+                                                    <h6 class="card-subtitle mb-2 text-muted ">Auteur(s) : Aucun auteur trouvé.</h6>
+                                                {% else %}
+                                                    {% for auteur in livre.auteurs %}
+                                                        <h6 class="card-subtitle mb-2 text-muted ">Auteur(s) : {{ auteur.nom }}</h6>
+                                                        {% if not loop.last %}, {% endif %}
+                                                    {% endfor %}
+                                                {% endif %}
+                                            </p>
+                                            <p class="card-text">Année de publication : {{ livre.anneePublication }}</p>
+
+                                            {% if app.user is defined and app.user.roles is defined and 'ROLE_BANNI' not in app.user.roles %}
+                                                {# emprunt #}
+                                                {% if livre.emprunts is not empty %}
+                                                    {% for emprunt in livre.emprunts %}
+                                                        {% if not emprunt.dateRestitutionEffective and emprunt.utilisateurs.id == app.user.id %}
+                                                        <div style="border: 1px solid; padding: 10px">
+                                                            <p>Emprunté le : {{ emprunt.dateDemande|date('Y-m-d') }}</p>
+                                                            <p>Restitution prévue le : {{ emprunt.dateRestitutionPrevisionnelle|date('d-m-Y') }}</p>
+                                                                <form method="post" action="{{ path('app_restituer', {'empruntId': emprunt.id}) }}" style="display:inline-block;">
+                                                                    <button type="submit" class="btn btn-danger">Restituer</button>
+                                                                </form>
+                                                                {% if not emprunt.extensionEmprunt %}
+                                                                    <form method="post" action="{{ path('app_extend_emprunt', {'empruntId': emprunt.id}) }}" style="display:inline-block;">
+                                                                        <button type="submit" class="btn btn-warning">Extension</button>
+                                                                    </form>
+                                                                {% endif %}
+                                                        </div>
+                                                        <br>
+                                                        {% else %} 
+                                                            {% if emprunt.restitue == 0 %}
+                                                                <div style="border: 1px solid; padding: 10px">
+                                                                    <p>Emprunté le : {{ emprunt.dateDemande|date('Y-m-d') }}</p>
+                                                                    <p>Restitution prévue le : {{ emprunt.dateRestitutionEffective|date('d-m-Y') }}</p>
+                                                                </div>
+                                                                <br>
+                                                            {% endif %}
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                {% endif %}
+
+                                                {# Option pour emprunter un livre #}
+
+                                                <div style="border: 1px solid; padding: 10px">
+                                                {% if livre.disponibilite %}
+                                                    <p style="color:green; font-weigt:bold">Disponible</p>
+                                                    <a href="{{ path('app_emprunts', {'livreId': livre.id}) }}" class="btn btn-success">Emprunter</a>
+                                                {% else %}
+                                                    <p style="color:red; font-weigt:bold">Indisponible</p>
+                                                {% endif %}
+                                                </div>
+
+                                                <br>
+                                                
+                                                <button type="button" class="btn btn-primary " data-bs-toggle="modal"
+                                                    data-bs-target="#staticBackdrop{{ livre.id }}">Voir plus
+                                                </button>
+                                            {% endif %} 
+                                        </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    {# pagination #}
+    {% if counter >= 9 %}
+        <div class="pagination">
+            <div class="navigation">
+                {% if pagerfanta.haveToPaginate %}
+                    <ul class="pagination">
+                        {% if pagerfanta.currentPage != 1 %}
+                            <li class="page-item"><a class="page-link" href="{{ path('app_bibliotheque', { page: pagerfanta.currentPage - 1 }) }}">Précédent</a></li>
+                        {% endif %}
+                        {% for page in 1..pagerfanta.nbPages %}
+                            <li class="page-item {% if page == pagerfanta.currentPage %}active{% endif %}">
+                                <a class="page-link" href="{{ path('app_bibliotheque', { page: page }) }}">{{ page }}</a>
+                            </li>
+                        {% endfor %}
+                        {% if pagerfanta.currentPage != pagerfanta.nbPages %}
+                            <li class="page-item"><a class="page-link" href="{{ path('app_bibliotheque', { page: pagerfanta.currentPage + 1 }) }}">Suivant</a></li>
+                        {% endif %}
+                    </ul>
+                {% endif %}
+            </div>
+        </div> 
+    {% endif %}
+
+
+{% endblock %}
+

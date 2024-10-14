@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Calendar index{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        .custom-form-container {
+            width: 60%;
+            margin: auto;
+        }
+    </style>
+{% endblock %}
+
+
+{% block body %}
+    <div class="container mt-5">
+    <h1 class="text-center mb-5">Vos réservations</h1>
+    <div class="row">
+        {% for calendar in calendars %}
+        <div class="col-md-4">
+            <div class="card mb-4">
+                {% for salleTravail in sallesTravail %}
+                <div class="card-body">
+                    <div class="col-md-12">
+                        <img src="{{ vich_uploader_asset(salleTravail, 'imageFile') }}" class="img-fluid mb-3" alt="Image de la salle">
+                    </div>
+                </div>
+                {% endfor %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ calendar.title }}</h5>
+                    <p class="card-text">Heure d'arrivée: {{ calendar.start ? calendar.start|date(' H:i :  Y-m-d') : 'N/A' }}</p>
+                    <p class="card-text">Heure de départ: {{ calendar.end ? calendar.end|date(' H:i : Y-m-d') : 'N/A' }}</p>
+                    <p class="card-text">Description: {{ calendar.description }}</p>
+                    <p class="card-text">Chaque jour: {{ calendar.allDay ? 'Oui' : 'Non' }}</p>
+                    <div class="d-grid gap-2">
+                        <a href="{{ path('app_calendar_show', {'id': calendar.id}) }}" class="btn btn-outline-success btn-lg">Afficher</a>
+                        <a href="{{ path('app_calendar_edit', {'id': calendar.id}) }}" class="btn btn-outline-success btn-lg">Modifier</a>
+                        <a href="{{ path('app_calendar_delete', {'id': calendar.id}) }}" class="btn btn-outline-success btn-lg">Supprimer</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col">
+            <p>Aucun enregistrement trouvé</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+    <div class="text-center">
+        <a href="{{ path('app_calendar_new') }}" class="btn btn-outline-success btn-lg">Nouvelle réservation</a>
+        <a href="{{ path('app_calendrier') }}" class="btn btn-outline-success btn-lg">Calendrier</a>
+    </div>
+</div>
+{% endblock %}

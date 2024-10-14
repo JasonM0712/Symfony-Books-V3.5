@@ -1,0 +1,109 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Calendrier{% endblock %}
+
+{% block stylesheets %}
+
+    <style>
+        #calendrier {
+            width: 50%;
+            margin: auto;
+        }
+    </style>
+
+{% endblock %}
+
+{% block body %}
+
+    <div class="container">
+        <div class="row justify-content-center mt-15">
+            <div class="col-md-10">
+                <div class="card">
+                    <div class="card-body">
+                        <div id="calendrier"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-3 justify-content-center">
+            <div class="col-md-6">
+                <div class="text-center">
+                    <a href="{{ path('app_calendar_index') }}" class="btn btn-outline-success btn-lg">Voir vos
+                        Réservations</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            let calendarElt = document.querySelector('#calendrier');
+            let calendar = new FullCalendar.Calendar(calendarElt, {
+                initialView: 'timeGridWeek',
+                locale: 'fr',
+                timeZone: 'Europe/Paris',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'timeGridWeek,timeGridDay'
+                },
+                slotDuration: '01:00:00',
+                slotMinTime: '08:00:00',
+                slotMaxTime: '19:00:00',
+                slotLabelFormat: {
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    omitZeroMinute: false,
+                    hour12: false
+                },
+                validRange: {
+                    start: '2024-04-23',
+                    end: '2024-12-29'
+                },
+                events: {{ data | raw }},
+                editable: true,
+                eventResizable: true,
+                droppable: true, // Permettre le glisser-déposer des événements
+                eventReceive: function (arg) {
+                    let diffInHours = Math.abs(arg.event.end - arg.event.start) / 36e5;
+                    if (diffInHours < 1 || diffInHours > 4) {
+                        arg.event.remove();
+                        alert("La réservation doit être d'au moins 1 heure et ne pas dépasser 4 heures.");
+                    } else {
+                        console.log("Créneau horaire sélectionné:", arg.event.start, arg.event.end);
+                    }
+                },
+                eventClick: function (mouseEnterInfo) {
+                    alert('Event: ' + info.event.title);
+                    alert('Coordinates: ' + info.jsEvent.pageX + ',' + info.jsEvent.pageY);
+                    alert('View: ' + info.view.type);
+
+                    // change the border color just for fun
+                    info.el.style.borderColor = 'red';
+                },
+                select: function (arg) {
+                    let diffInHours = Math.abs(arg.end - arg.start) / 36e5;
+                    if (diffInHours < 1 || diffInHours > 4) {
+                        alert("La réservation doit être d'au moins 1 heure et ne pas dépasser 4 heures.");
+                        calendar.unselect();
+                    } else {
+                        console.log("Créneau horaire sélectionné:", arg.start, arg.end);
+                    }
+                },
+                eventDrop: function (info) {
+                    // Logique pour la modification des rendez-vous déjà pris
+                    console.log("Événement déplacé:", info.event.start, info.event.end);
+                },
+                eventResize: function (info) {
+                    // Logique pour le redimensionnement des rendez-vous déjà pris
+                    console.log("Événement redimensionné:", info.event.start, info.event.end);
+                }
+
+            });
+            calendar.render();
+        });
+    </script>
+{% endblock %}
