@@ -13,7 +13,13 @@
         </tr>
         <tr>
             <th>Auteur</th>
-            {# <td>{{ livre.auteurs }}</td> #}
+          
+            {% for auteur in livre.auteurs %}
+                <td>{{ auteur.nom }}</td>  {# Affiche le nom de chaque auteur #}
+            {% else %}
+                <td>Aucun auteur associé.</td>  {# Affiche ce message s'il n'y a pas d'auteurs #}
+            {% endfor %}
+        
         <tr>
             <th>AnneePublication</th>
             <td>{{ livre.anneePublication }}</td>
@@ -37,5 +43,5 @@
 
     <a class="btn btn-primary" href="{{ path('app_livres_edit', {'id': livre.id}) }}">Editer</a>
 
-    {{ include('livres/_delete_form.html.twig') }}
+    {{ include('livres/_delete_form.html.twig', {'livre': livre}) }}
 {% endblock %}

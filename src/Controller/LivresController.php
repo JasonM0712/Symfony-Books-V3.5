@@ -28,7 +28,7 @@ class LivresController extends AbstractController
     public function bibliotheque(LivresRepository $livreRepository, Request $request): Response
     {
         // Utilise le repository pour obtenir tous les livres
-        $livres = $livreRepository->createQueryBuilder('l'); 
+        $livre = $livreRepository->createQueryBuilder('l'); 
     
         $page = $request->query->getInt('page', 1);
         $limite = 9;
@@ -36,7 +36,7 @@ class LivresController extends AbstractController
 
         return $this->render('livres/index.html.twig', [
             'pager' => $pagerfanta,
-            'livres' => $pagerfanta->getCurrentPageResults(),
+            'livres' => $pagerfanta->getCurrentPageResults(), // Ajoute cette ligne pour passer les livres
         ]);
     }
     
@@ -48,13 +48,13 @@ class LivresController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Ajouter le livre en fin de liste
+          
             $positionMax = $entityManager->getRepository(Livres::class)->findPositionMax();
             $livre->setPosition($positionMax + 1);
 
-            // Persistence du livre après réorganisation des autres positions
+            
             $entityManager->persist($livre);
-            $entityManager->flush();  // Ici on fait un flush global une seule fois
+            $entityManager->flush(); 
 
             return $this->redirectToRoute('app_livres_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -66,7 +66,7 @@ class LivresController extends AbstractController
     }
 
 
-    #[Route('/{id}', name: 'app_livres_show', methods: ['GET'])]
+    #[Route('/{id}/show', name: 'app_livres_show', methods: ['GET'])]
     public function show(Livres $livre): Response
     {
         return $this->render('livres/show.html.twig', [
@@ -79,11 +79,11 @@ class LivresController extends AbstractController
     {
         $form = $this->createForm(LivresType::class, $livre);
         $form->handleRequest($request);
-
+      
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($livre);
             $entityManager->flush();
-
+            
             return $this->redirectToRoute('app_livres_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -93,13 +93,19 @@ class LivresController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_livres_delete', methods: ['POST'])]
+    #[Route('/{id}/delete', name: 'app_livres_delete', methods: ['POST'])]
     public function delete(Request $request, Livres $livre, EntityManagerInterface $entityManager): Response
     {
-        dump($request->request->all());
-        if ($this->isCsrfTokenValid('delete' . $livre->getId(), $request->getPayload()->get('_token'))) {
+         if (!$livre) {
+            throw $this->createNotFoundException('Le livre n\'existe pas.');
+        } 
+
+        if ($this->isCsrfTokenValid('delete' . $livre->getId(), $request->request->get('_token'))) {
             $entityManager->remove($livre);
             $entityManager->flush();
+        }
+         else {
+            throw new InvalidCsrfTokenException('Token CSRF invalide.');
         }
 
         return $this->redirectToRoute('app_livres_index', [], Response::HTTP_SEE_OTHER);
