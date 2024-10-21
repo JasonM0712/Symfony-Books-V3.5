@@ -63,8 +63,8 @@ class Livres
     #[ORM\OneToMany(targetEntity: Emprunts::class, mappedBy: 'livres', orphanRemoval: true)]
     private Collection $emprunts;
 
-    #[ORM\OneToMany(targetEntity: CommentairesEmprunts::class, mappedBy: 'livres', orphanRemoval: true)]
-    private Collection $commentairesEmprunts;
+    // #[ORM\OneToMany(targetEntity: CommentairesEmprunts::class, mappedBy: 'livre', orphanRemoval: true)]
+    // private Collection $commentairesEmprunts;
 
     #[ORM\Column]
     private ?int $Position = null;

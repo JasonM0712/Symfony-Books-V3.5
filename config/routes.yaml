@@ -14,3 +14,8 @@ debug_position_update:
     path: /position_update
     controller: App\Controller\LivresController::positionUpdate
     methods: [POST]
+
+app_livres_delete:
+    path: /livres/{id}/delete
+    controller: App\Controller\LivresController::delete
+    methods: POST

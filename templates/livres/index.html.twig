@@ -30,7 +30,6 @@
             <th>actions</th>
         </tr>
         </thead>
-
         <tbody id="source-list">
             {% for livre in pager.getCurrentPageResults() %}
                 <tr id="list-item" data-id='{{ livre.id }}'>
@@ -44,6 +43,7 @@
                         <a class="btn btn-primary" href="{{ path('app_livres_show', {'id': livre.id}) }}" style="margin-bottom: 5px">Visuel</a>
                         <a class="btn btn-primary" href="{{ path('app_livres_edit', {'id': livre.id}) }}">Editer</a>
                         {{ include('livres/_delete_form.html.twig', {'livre': livre}) }} <!-- Inclus le formulaire de suppression -->
+
                     </td>
                 </tr>
             {% else %}
