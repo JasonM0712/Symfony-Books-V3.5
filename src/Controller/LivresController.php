@@ -27,16 +27,15 @@ class LivresController extends AbstractController
     #[Route('/', name: 'app_livres_index', methods: ['GET'])]
     public function bibliotheque(LivresRepository $livreRepository, Request $request): Response
     {
-        // Utilise le repository pour obtenir tous les livres
         $livre = $livreRepository->createQueryBuilder('l'); 
     
         $page = $request->query->getInt('page', 1);
         $limite = 9;
         $pagerfanta = $livreRepository->findAllPaginated($page, $limite);  
-
+ 
         return $this->render('livres/index.html.twig', [
             'pager' => $pagerfanta,
-            'livres' => $pagerfanta->getCurrentPageResults(), // Ajoute cette ligne pour passer les livres
+            'livres' => $pagerfanta->getCurrentPageResults(),
         ]);
     }
     
@@ -96,18 +95,22 @@ class LivresController extends AbstractController
     #[Route('/{id}/delete', name: 'app_livres_delete', methods: ['POST'])]
     public function delete(Request $request, Livres $livre, EntityManagerInterface $entityManager): Response
     {
-         if (!$livre) {
-            throw $this->createNotFoundException('Le livre n\'existe pas.');
-        } 
-
-        if ($this->isCsrfTokenValid('delete' . $livre->getId(), $request->request->get('_token'))) {
-            $entityManager->remove($livre);
-            $entityManager->flush();
-        }
-         else {
-            throw new InvalidCsrfTokenException('Token CSRF invalide.');
+        // Vérifiez que le livre existe
+        if (!$livre) {
+            throw $this->createNotFoundException('Livre non trouvé².');
         }
 
+        // Vérifiez le token CSRF
+        if (!$this->isCsrfTokenValid('delete' . $livre->getId(), $request->request->get('_token'))) {
+            return $this->redirectToRoute('app_livres_index', [], Response::HTTP_SEE_OTHER);
+        }
+
+        // dd($livre);
+        // Suppression du livre
+        $entityManager->remove($livre);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Le livre a été supprimé avec succès.');
         return $this->redirectToRoute('app_livres_index', [], Response::HTTP_SEE_OTHER);
     }
 
