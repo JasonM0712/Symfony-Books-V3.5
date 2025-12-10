@@ -13,10 +13,12 @@ Etapes pour restaurer le projet Symfony-Books :
 1 - Télécharger le projet :
 git clone https://github.com/N0zik/symfony-books.git
 
-2 - Installer Composer :
+2.1 - Installer Composer :
 composer install
 ou
 composer i
+
+2.2 npm run build
 
 3 - Télécharger la BDD symfony-books.sql :
 https://github.com/N0zik/symfony-books/blob/master/symfony-books.sql
