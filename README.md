@@ -18,7 +18,7 @@ composer install
 ou
 composer i
 
-2.2 npm run build
+2.2 - npm run build
 
 3 - Télécharger la BDD symfony-books.sql :
 https://github.com/N0zik/symfony-books/blob/master/symfony-books.sql
